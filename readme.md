@@ -27,3 +27,7 @@ Finally, go to Kibana, under Management create an index pattern called 'nyc-taxi
 ## Import Kibana visualizations
 
 In Kibana, Managmenet, Saved Objects, Import taxi.json file
+
+## Install Elastic Stack
+
+Please go to  https://github.com/bindiego/local_services/tree/develop/elastic for more information
