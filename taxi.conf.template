@@ -1,0 +1,86 @@
+input {
+   stdin { type => "tripdata" }
+}
+filter {
+   csv {
+      columns => ["VendorID","tpep_pickup_datetime","tpep_dropoff_datetime","passenger_count","trip_distance","RatecodeID","store_and_fwd_flag","PULocationID","DOLocationID","payment_type","fare_amount","extra","mta_tax","tip_amount","tolls_amount","improvement_surcharge","total_amount"]
+      convert => {"extra" => "float"}
+      convert => {"fare_amount" => "float"}
+      convert => {"improvement_surcharge" => "float"}
+      convert => {"mta_tax" => "float"}
+      convert => {"tip_amount" => "float"}
+      convert => {"tolls_amount" => "float"}
+      convert => {"total_amount" => "float"}
+      convert => {"trip_distance" => "float"}
+      convert => {"passenger_count" => "integer"}
+   }
+   date {
+      match => ["tpep_pickup_datetime", "yyyy-MM-dd HH:mm:ss", "ISO8601"]
+      timezone => "EST"
+   }
+   date {
+      match => ["tpep_pickup_datetime", "yyyy-MM-dd HH:mm:ss", "ISO8601"]
+      target => ["@tpep_pickup_datetime"]
+      remove_field => ["tpep_pickup_datetime"]
+      timezone => "EST"
+   }
+   date {
+      match => ["tpep_dropoff_datetime", "yyyy-MM-dd HH:mm:ss", "ISO8601"]
+      target => ["@tpep_dropoff_datetime"]
+      remove_field => ["tpep_dropoff_datetime"]
+      timezone => "EST"
+   }
+   translate {
+      field => "RatecodeID"
+      destination => "RatecodeID"
+      dictionary => [
+      "1", "Standard rate",
+      "2", "JFK",
+      "3", "Newark",
+      "4", "Nassau or Westchester",
+      "5", "Negotiated fare",
+      "6", "Group ride"
+      ]
+    }
+   translate {
+      field => "VendorID"
+      destination => "VendorID_t"
+      dictionary => [
+      "1", "Creative Mobile Technologies",
+      "2", "VeriFone Inc"
+      ]
+   }
+   translate {
+      field => "payment_type"
+      destination => "payment_type_t"
+      dictionary => [
+      "1", "Credit card",
+      "2", "Cash",
+      "3", "No charge",
+      "4", "Dispute",
+      "5", "Unknown",
+      "6", "Voided trip"
+      ]
+   }
+   translate {
+      field => "PULocationID"
+      destination => "PULocationID_t"
+      dictionary_path => "taxi.csv"
+   }
+   translate {
+      field => "DOLocationID"
+      destination => "DOLocationID_t"
+      dictionary_path => "taxi.csv"
+   }
+   mutate {
+      remove_field => ["message", "column18", "column19", "RatecodeID", "VendorID", "payment_type", "PULocationID", "DOLocationID"]
+   }
+}
+output {
+#  stdout { codec => dots }
+   elasticsearch { hosts => ["localhost:9200"]
+   user => "<Enter elasticsearch user>"
+   password => "<Enter Password>" 
+   index => "nyc-taxi-yellow-%{+YYYY.MM.dd}"
+  }
+}
