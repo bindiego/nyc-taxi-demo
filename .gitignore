@@ -1,3 +1,4 @@
 data
 deploy
 taxi.conf
+**/*.bak
