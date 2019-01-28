@@ -17,10 +17,10 @@ __get_jre() {
     [ -f $PWD/deploy/jre/jre8.tar.gz ] || \
         curl \
         -v -j -k -L -H "Cookie: oraclelicense=accept-securebackup-cookie" \
-        https://download.oracle.com/otn-pub/java/jdk/8u192-b12/750e1c8617c5452694857ad95c3ee230/jre-8u192-linux-x64.tar.gz \
+        https://download.oracle.com/otn-pub/java/jdk/8u202-b08/1961070e4c9b4e26a04e7f5a083f551e/jre-8u202-linux-x64.tar.gz \
         --output $PWD/deploy/jre/jre8.tar.gz
     tar xzf $PWD/deploy/jre/jre8.tar.gz -C $PWD/deploy/jre && \
-        ln -s $PWD/deploy/jre/jre1.8.0_192 $PWD/deploy/jre/jre8
+        ln -s $PWD/deploy/jre/jre1.8.0_202 $PWD/deploy/jre/jre8
 }
 
 __deploy() {
